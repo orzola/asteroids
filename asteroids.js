@@ -8,13 +8,13 @@ var ball_vel=[0,0];
 function init()
 {
     context = myCanvas.getContext('2d');
-    setInterval(draw,1);
+    setInterval(draw,10);
 }
 
 function draw()
 {
     // declare variables
-    var ball_radius = 25;
+    var ball_radius = 26;
     var where_is_ball = ball_pos;    
     
     context.clearRect(0,0, width,height);    
@@ -37,10 +37,22 @@ function draw()
     // ball_pos.vel[0] *= 0.95;
     // ball_pos.vel[1] *= 0.95;
 
-    // Draws a circle of radius 20 at the coordinates 100,100 on the canvas
+    // Draw a circle
     context.arc(ball_pos[0],ball_pos[1],ball_radius,0,Math.PI*2,false);
     context.closePath();
+    context.fillStyle ='black';
     context.fill();
+    context.strokeStyle = 'white';
+    context.stroke();
+    
+    // Draw triangle
+    context.beginPath();
+    context.moveTo(ball_pos[0],ball_pos[1]-25);
+    context.lineTo(ball_pos[0]-23,ball_pos[1]+13);
+    context.lineTo(ball_pos[0]+23,ball_pos[1]+13);
+    context.closePath();
+    context.strokeStyle='white';
+    context.stroke();
 
 }
 
@@ -60,8 +72,8 @@ function draw()
 
 // key handler
 $(document).keydown(function(key) {
-  if (key.which === 37) {ball_pos[0] -= 1;} // left
-  if (key.which === 39) {ball_pos[0] += 1;} // right
-  if (key.which === 38) {ball_pos[1] -= 1;} // up
-  if (key.which === 40) {ball_pos[1] += 1;} // down 
+  if (key.which === 37) {ball_pos[0] -= 5;} // left
+  if (key.which === 39) {ball_pos[0] += 5;} // right
+  if (key.which === 38) {ball_pos[1] -= 5;} // up
+  if (key.which === 40) {ball_pos[1] += 5;} // down 
 });
