@@ -1,27 +1,61 @@
+window.addEventListener("load", init);
+var canvas = document.createElement('canvas');
+canvas.width = 800; 
+canvas.height = 600; 
 var context;
-var width = 800;
-var height = 600;
+context = canvas.getContext('2d');
+document.body.appendChild(canvas);
 
-var ball_pos= [width / 2,height / 2];
-var ball_vel=[0,0];
+// position & velocity
+var pos= [canvas.width / 2, canvas.height / 2];
+var vel=[0, 0];
+
+var thrust = 0; 
+
+// angle
+var angle = 0;
+var angle_vel = 0;
+var to_radians = Math.PI/180;
+
+var shipImage = new Image();
+shipImage.src = "images/double_ship_base.png";
 
 function init()
-{
-    context = myCanvas.getContext('2d');
-    setInterval(draw,10);
-}
+    {
+    setInterval(draw, 20);
+    }
 
 function draw()
+    { 
+	context.clearRect(0, 0, canvas.width, canvas.height); 
+	ship(shipImage, pos[0], pos[1], angle);
+    where("#FFFFFF", "14px Arial", "pos: " + pos, 10, 20);
+    where("#FFFFFF", "14px Arial", "ang: " + angle, 10, 35);
+    where("#FFFFFF", "14px Arial", "vel: " + vel, 10, 50);
+    angle += angle_vel;
+    }
+
+
+// HELPERS
+
+// Draw coordinates
+function where(text_color, text_font, objet, x, y)
+    {
+    context.fillStyle = text_color;
+    context.font = text_font;
+    context.fillText(objet, x, y);
+    }
+
+// Converts angle to vector
+function angle_to_vector(angle)
+    {
+    return [Math.cos(angle), Math.sin(angle)];
+    }
+
+function ship(shipImage, x, y, angle)
 {
     // declare variables
-    var ball_radius = 26;
-    var where_is_ball = ball_pos;    
-    
-    context.clearRect(0,0, width,height);    
-    context.beginPath();
-    context.fillStyle="#FFFFFF";
-    context.font="14px Arial";
-    context.fillText(where_is_ball,10,20);
+    //var ball_radius = 26;
 
     // Update ball position
     // ball_x += ball_x_vel; 
@@ -30,57 +64,57 @@ function draw()
     // Update ball position with wrap  
     // usar esto para arreglar el problema del resto negativo
     // (a % b + b) % b
-    ball_pos[0] = ((ball_pos[0] + ball_vel[0]) % width + width) % width;
-    ball_pos[1] = ((ball_pos[1] + ball_vel[1]) % height + height) % height;
+    pos[0] = ((pos[0] + vel[0]) % canvas.width + canvas.width) % canvas.width;
+    pos[1] = ((pos[1] + vel[1]) % canvas.height + canvas.height) % canvas.height;
     
+    if (thrust === 1)
+        {
+        //vel[0] += 1;
+        var forward = angle_to_vector(angle);
+        vel[0] += forward[0]* 0.2;
+        vel[1] += forward[1]* 0.2;
+        }
+        
     // Friction
-    // ball_pos.vel[0] *= 0.95;
-    // ball_pos.vel[1] *= 0.95;
+    vel[0] *= 0.95;
+    vel[1] *= 0.95;
+    
+    // Draw ship
+    context.save();
+    context.translate(x, y);
+    context.rotate(angle * to_radians);
+    context.drawImage(shipImage, -(shipImage.width/2), -(shipImage.height/2));
+    context.restore(); 
 
     // Draw a circle
-    context.arc(ball_pos[0],ball_pos[1],ball_radius,0,Math.PI*2,false);
-    context.closePath();
-    context.fillStyle ='black';
-    context.fill();
-    context.strokeStyle = 'white';
-    context.stroke();
+    //context.arc(ball_pos[0],ball_pos[1],ball_radius,0,Math.PI*2,false);
+    //context.closePath();
+    //context.fillStyle ='black';
+    //context.fill();
+    //context.strokeStyle = 'white';
+    //context.stroke();
     
     // Draw triangle
-    context.beginPath();
-    context.moveTo(ball_pos[0],ball_pos[1]-25);
-    context.lineTo(ball_pos[0]-23,ball_pos[1]+13);
-    context.lineTo(ball_pos[0]+23,ball_pos[1]+13);
-    context.closePath();
-    context.strokeStyle='white';
-    context.stroke();
-
+    //context.beginPath();
+    //context.moveTo(ball_pos[0],ball_pos[1]-25);
+    //context.lineTo(ball_pos[0]-23,ball_pos[1]+13);
+    //context.lineTo(ball_pos[0]+23,ball_pos[1]+13);
+    //context.closePath();
+    //context.strokeStyle='white';
+    //context.stroke();
 }
-
-// function keydown()
-// {
-//    var vel = 4;
-//   if (key === simplegui.KEY_MAP["left"]){
-//        ball_pos[0] -= vel}
-//    else if key === simplegui.KEY_MAP["right"]:
-//        ball_pos[0] += vel
-//    else if key === simplegui.KEY_MAP["down"]:
-//        ball_pos[1] += vel
-//    else if key === simplegui.KEY_MAP["up"]:
-//        ball_pos[1] -= vel
-// }
-
 
 // key handler
 $(document).keydown(function(key) {
-  if (key.which === 37) {ball_vel[0] -= 5;} // left
-  if (key.which === 39) {ball_vel[0] += 5;} // right
-  if (key.which === 38) {ball_vel[1] -= 5;} // up
-  if (key.which === 40) {ball_vel[1] += 5;} // down 
+  if (key.which === 37) {angle_vel = -2;} // left
+  if (key.which === 39) {angle_vel = 2;} // right
+  if (key.which === 38) {thrust= 1;} // up
+  if (key.which === 40) {thrust= 0;} // down 
 });
 
 $(document).keyup(function(key) {
-  if (key.which === 37) {ball_vel[0] = 0;} // left
-  if (key.which === 39) {ball_vel[0] = 0;} // right
-  if (key.which === 38) {ball_vel[1] = 0;} // up
-  if (key.which === 40) {ball_vel[1] = 0;} // down 
+  if (key.which === 37) {angle_vel = 0;} // left
+  if (key.which === 39) {angle_vel = 0;} // right
+  if (key.which === 38) {thrust= 0;} // up
+  if (key.which === 40) {thrust= 0;} // down 
 });
