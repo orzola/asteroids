@@ -19,7 +19,7 @@ function draw()
     
     context.clearRect(0,0, width,height);    
     context.beginPath();
-    context.fillStyle="#0000ff";
+    context.fillStyle="#FFFFFF";
     context.font="14px Arial";
     context.fillText(where_is_ball,10,20);
 
@@ -72,8 +72,15 @@ function draw()
 
 // key handler
 $(document).keydown(function(key) {
-  if (key.which === 37) {ball_pos[0] -= 5;} // left
-  if (key.which === 39) {ball_pos[0] += 5;} // right
-  if (key.which === 38) {ball_pos[1] -= 5;} // up
-  if (key.which === 40) {ball_pos[1] += 5;} // down 
+  if (key.which === 37) {ball_vel[0] -= 5;} // left
+  if (key.which === 39) {ball_vel[0] += 5;} // right
+  if (key.which === 38) {ball_vel[1] -= 5;} // up
+  if (key.which === 40) {ball_vel[1] += 5;} // down 
+});
+
+$(document).keyup(function(key) {
+  if (key.which === 37) {ball_vel[0] = 0;} // left
+  if (key.which === 39) {ball_vel[0] = 0;} // right
+  if (key.which === 38) {ball_vel[1] = 0;} // up
+  if (key.which === 40) {ball_vel[1] = 0;} // down 
 });
